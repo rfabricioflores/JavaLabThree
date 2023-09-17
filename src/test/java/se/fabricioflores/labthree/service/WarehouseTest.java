@@ -54,7 +54,6 @@ public class WarehouseTest {
         assertThat(allProducts).containsExactly(product1);
     }
 
-
     // Edit Product Tests
     @Test
     void testEditProduct() {
@@ -122,7 +121,7 @@ public class WarehouseTest {
 
     // Get products by category and sort in alphabetic order
     @Test
-    void TestGetProductsByCategoryAndSortedByAlphabeticOrder() {
+    void testGetProductsByCategoryAndSortedByAlphabeticOrder() {
         warehouse.addProduct(new Product(1, "Product C", Category.TECH, 8));
         warehouse.addProduct(new Product(2, "Product A", Category.JEWELRY, 7));
         warehouse.addProduct(new Product(3, "Product B", Category.TECH, 9));
@@ -134,7 +133,7 @@ public class WarehouseTest {
 
     // Get products created after a date test
     @Test
-    void getProductsCreatedAfterDate() {
+    void testGetProductsCreatedAfterDate() {
         var currentDate = LocalDateTime.now();
         var pastDate = currentDate.minusDays(1);
         var futureDate = currentDate.plusDays(1);
@@ -150,7 +149,7 @@ public class WarehouseTest {
 
     // Get products that have been modified after creation test
     @Test
-    void getProductsModifiedAfterCreation() {
+    void testGetProductsModifiedAfterCreation() {
         var currentDate = LocalDateTime.now();
         var pastDate = currentDate.minusDays(1);
         var futureDate = currentDate.plusDays(1);
@@ -162,5 +161,59 @@ public class WarehouseTest {
         var productsModifiedAfterCreation = warehouse.getProductsModifiedAfterCreation();
         assertThat(productsModifiedAfterCreation).hasSize(1);
         assertThat(productsModifiedAfterCreation.get(0).name()).isEqualTo("Product 3");
+    }
+
+    // VG Tester
+    @Test
+    void testGetCategoriesWithOneOrMoreProducts() {
+        warehouse.addProduct(new Product(1, "Product A", Category.SPORT, 2));
+        warehouse.addProduct(new Product(2, "Product B", Category.TECH, 7));
+        warehouse.addProduct(new Product(3, "Product C", Category.SPORT, 9));
+        warehouse.addProduct(new Product(4, "Product D", Category.SPORT, 9));
+
+        var categories = warehouse.getCategoriesWithOneOrMoreProducts();
+        assertThat(categories).hasSize(2);
+        assertThat(categories).contains(Category.SPORT, Category.TECH);
+    }
+
+    @Test
+    void testGetProductCountOfCategory() {
+        warehouse.addProduct(new Product(1, "Product 1", Category.JEWELRY, 2));
+        warehouse.addProduct(new Product(2, "Product 2", Category.TECH, 7));
+        warehouse.addProduct(new Product(3, "Product 3", Category.JEWELRY, 9));
+
+        int jewelryProductCount = warehouse.getProductCountOfCategory(Category.JEWELRY);
+        assertThat(jewelryProductCount).isEqualTo(2);
+    }
+
+    @Test
+    void testGetProductMapOfNameFirstCharAndQuantity() {
+        warehouse.addProduct(new Product(1, "Arc", Category.TECH, 2));
+        warehouse.addProduct(new Product(2, "Boat", Category.TECH, 1));
+        warehouse.addProduct(new Product(3, "Banana", Category.TECH, 4));
+        warehouse.addProduct(new Product(4, "Basic", Category.TECH, 6));
+        warehouse.addProduct(new Product(5, "Car", Category.TECH, 9));
+
+        var charCountMap = warehouse.getProductMapOfNameFirstCharAndQuantity();
+        assertThat(charCountMap).hasSize(3);
+        assertThat(charCountMap.get('A')).isEqualTo(1);
+        assertThat(charCountMap.get('B')).isEqualTo(3);
+        assertThat(charCountMap.get('C')).isEqualTo(1);
+    }
+
+    @Test
+    void testGetMaxRatedProductsCreatedThisMonthSortedByNewest() {
+        LocalDateTime thisMonth = LocalDateTime.now();
+        LocalDateTime lastMonth = thisMonth.minusMonths(1);
+
+        warehouse.addProduct(new Product(1, "Product A", Category.SPORT, 10, thisMonth, thisMonth));
+        warehouse.addProduct(new Product(2, "Product B", Category.SPORT, 9, thisMonth, thisMonth));
+        warehouse.addProduct(new Product(3, "Product C", Category.SPORT, 10, lastMonth, lastMonth));
+        warehouse.addProduct(new Product(4, "Product D", Category.SPORT, 10, lastMonth, lastMonth));
+
+        var maxRatedProductsThisMonth = warehouse.getMaxRatedProductsCreatedThisMonthSortedByNewest();
+
+        assertThat(maxRatedProductsThisMonth).hasSize(1);
+        assertThat(maxRatedProductsThisMonth.get(0).rating()).isEqualTo(10);
     }
 }

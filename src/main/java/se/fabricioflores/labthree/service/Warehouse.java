@@ -67,7 +67,7 @@ public class Warehouse {
     }
 
     // VG Uppgift
-    public final List<Category> getAllCategoriesWithOneOrMoreProducts() {
+    public final List<Category> getCategoriesWithOneOrMoreProducts() {
         return products.stream()
                 .map(Product::category)
                 .distinct()
@@ -82,7 +82,7 @@ public class Warehouse {
 
     public final Map<Character, Long> getProductMapOfNameFirstCharAndQuantity() {
         return products.stream()
-                .map(p -> p.name().charAt(0))
+                .map(p -> p.name().toUpperCase().charAt(0))
                 .collect(
                         Collectors.groupingBy(
                                 letter -> letter,
