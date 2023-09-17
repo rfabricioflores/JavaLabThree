@@ -4,7 +4,9 @@ import se.fabricioflores.labthree.entities.Category;
 import se.fabricioflores.labthree.entities.Product;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Warehouse {
     private final List<Product> products = new ArrayList<>();
@@ -61,6 +63,39 @@ public class Warehouse {
     public final List<Product> getProductsModifiedAfterCreation() {
         return products.stream()
                 .filter(p -> !p.editedAt().equals(p.createdAt()))
+                .toList();
+    }
+
+    // VG Uppgift
+    public final List<Category> getAllCategoriesWithOneOrMoreProducts() {
+        return products.stream()
+                .map(Product::category)
+                .distinct()
+                .toList();
+    }
+
+    public final int getProductCountOfCategory(Category category) {
+        return (int) products.stream()
+                .filter(p -> p.category() == category)
+                .count();
+    }
+
+    public final Map<Character, Long> getProductMapOfNameFirstCharAndQuantity() {
+        return products.stream()
+                .map(p -> p.name().charAt(0))
+                .collect(
+                        Collectors.groupingBy(
+                                letter -> letter,
+                                Collectors.counting()
+                        )
+                );
+    }
+
+    public final List<Product> getMaxRatedProductsCreatedThisMonthSortedByNewest() {
+        return products.stream()
+                .filter(p -> p.createdAt().getMonth() == YearMonth.now().getMonth())
+                .filter(p -> p.rating() == 10)
+                .sorted(Comparator.comparing(Product::createdAt).reversed())
                 .toList();
     }
 }
