@@ -4,22 +4,21 @@ import se.fabricioflores.labthree.entities.Category;
 import se.fabricioflores.labthree.entities.Product;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Warehouse {
     private final List<Product> products = new ArrayList<>();
 
     public final void addProduct(Product product) {
         if (product.name().isEmpty()) return;
+        if (product.rating() > 10 || product.rating() < 1) return;
         if (products.contains(product)) return;
         products.add(product);
     }
 
     public final void editProduct(int id, String name, Category category, int rating) {
         if (name.isEmpty()) return;
+        if (rating > 10 || rating < 1) return;
         if (category == null) return;
 
         var optionalProduct = products.stream().filter(p -> p.id() == id).findFirst();
